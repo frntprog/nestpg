@@ -5,4 +5,7 @@ export class CreateTaskDto {
   @IsString()
   @MinLength(3)
   title: string;
+
+  @IsString()
+  groupId?: string;
 }

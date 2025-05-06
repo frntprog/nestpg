@@ -13,28 +13,40 @@ export class TasksService {
     private readonly taskRepository: Repository<Task>,
   ) {}
   async create(
-    createUserDto: CreateTaskDto & { userId: string },
+    createTaskDto: CreateTaskDto & { userId: string },
   ): Promise<Task> {
-    const newTask = this.taskRepository.create(createUserDto); // Create entity instance
+    const { groupId, ...rest } = createTaskDto;
+    const newTask = this.taskRepository.create({
+      ...rest,
+      group: groupId ? { id: groupId } : undefined, // attach relation if provided
+    });
     console.log('newTask', newTask);
 
     return await this.taskRepository.save(newTask); // Save to DB
   }
 
-  async getTaskByID(id: string): Promise<Task | null> {
-    const task = await this.taskRepository.findOne({ where: { id } });
-    const taskByUser = await this.taskRepository.findOne({
+  async getTaskByID(id: string): Promise<Task> {
+    const task = await this.taskRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'group'], // ← add group if needed
     });
 
-    console.log('taskByUser', taskByUser);
-
     if (!task) {
-      throw new BadRequestException('User doesnt exist');
+      throw new BadRequestException('Task does not exist');
     }
+
     return task;
   }
+
+  // async assignToGroup(taskId: string, groupId: string): Promise<Task> {
+  //   const task = await this.getTaskByID(taskId);
+  //   if (!task) {
+  //     throw new BadRequestException('Task not found');
+  //   }
+
+  //   task.group = { id: groupId } as any; // cast to avoid full object fetch
+  //   return await this.taskRepository.save(task);
+  // }
 
   async getAllTasks(userId: string): Promise<Task[] | null> {
     const tasks = await this.taskRepository.find({

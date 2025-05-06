@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
+import { TaskGroup } from '../groups/task-group.entity';
 
 @Entity()
 export class Task {
@@ -27,4 +29,8 @@ export class Task {
 
   @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
   user: User;
+
+  @ManyToOne(() => TaskGroup, (group) => group.tasks, { nullable: true })
+  @JoinColumn()
+  group: TaskGroup;
 }

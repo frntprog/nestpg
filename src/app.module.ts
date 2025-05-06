@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/users/user.entity';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { Task } from './modules/tasks/task.entity';
+import { TaskGroups } from './modules/groups/groups.module';
+import { TaskGroup } from './modules/groups/task-group.entity';
 
 @Module({
   imports: [
@@ -16,11 +18,12 @@ import { Task } from './modules/tasks/task.entity';
       username: 'postgres',
       password: 'Aezakmi37$',
       database: 'nestsimp',
-      entities: [User, Task], // or use glob: __dirname + '/../**/*.entity{.ts,.js}'
+      entities: [User, Task, TaskGroup], // or use glob: __dirname + '/../**/*.entity{.ts,.js}'
       synchronize: true,
     }),
     UsersModule,
     TasksModule,
+    TaskGroups,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,23 +5,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Task } from '../tasks/task.entity';
-import { TaskGroup } from '../groups/task-group.entity';
+import { User } from '../users/user.entity';
 
 @Entity()
-export class User {
+export class TaskGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 500 })
+  @Column({ length: 255 })
   name: string;
-
-  @Column({ nullable: false })
-  email: string;
-
-  @Column({ nullable: false })
-  password: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -29,9 +25,13 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Task, (task) => task.user)
+  @Column()
+  userId: string;
+
+  @OneToMany(() => Task, (task) => task.group)
   tasks: Task[];
 
-  @OneToMany(() => TaskGroup, (group) => group.user)
-  groups: TaskGroup[];
+  @ManyToOne(() => User, (user) => user.groups)
+  @JoinColumn()
+  user: User;
 }
